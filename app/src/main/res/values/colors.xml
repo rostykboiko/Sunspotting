@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppTheme Dark -->
+    <color name="colorPrimary">#21242b</color>
+    <color name="colorPrimaryDark">#21242b</color>
+    <color name="colorPrimaryLight">#BBDEFB</color>
+    <color name="cardDarkColor">#BBDEFB</color>
+    <color name="colorBackground">#363a43</color>
+    <color name="colorAccent">#40567d</color>
+    <color name="colorAccentSecond">#40567d</color>
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorSecondaryText">#727272</color>
+    <color name="colorDivider">#DCDCDC</color>
+    <color name="colorActiveSwitch">#40567d</color>
+
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#727272</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="titan">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="base">#DDDDDD</color>
+    <color name="white">#FFFFFF</color>
+    <color name="whiteBasic">#FFFFFF</color>
+
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
+</resources>
