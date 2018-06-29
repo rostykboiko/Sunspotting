@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- AppTheme Dark -->
     <color name="colorPrimary">#21242b</color>
     <color name="colorPrimaryDark">#21242b</color>
@@ -8,7 +9,7 @@
     <color name="colorBackground">#363a43</color>
     <color name="colorAccent">#40567d</color>
     <color name="colorAccentSecond">#40567d</color>
-    <color name="colorPrimaryText">#212121</color>
+    <color name="colorPrimaryText">#DCDCDC</color>
     <color name="colorSecondaryText">#727272</color>
     <color name="colorDivider">#DCDCDC</color>
     <color name="colorActiveSwitch">#40567d</color>
@@ -27,4 +28,5 @@
 
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_300">#E0E0E0</color>
+
 </resources>
