@@ -1,5 +1,6 @@
 package com.rostykboiko.teamvoy.sunspotting.main;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -28,13 +29,17 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.rostykboiko.teamvoy.sunspotting.R;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
+import com.rostykboiko.teamvoy.sunspotting.utils.OneShotTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks, SunDataCallback {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final int PERMISSIONS_REQUEST_FINE_LOCATION = 99;
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     TextView sunriseTimeTV;
     @BindView(R.id.sunset_time)
     TextView sunsetTimeTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,28 +60,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        locality = new Locality();
 
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(LocationServices.API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, this)
-                .build();
-
+        initGoogleApi();
         getCurrentLocation();
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onAddPlaceButtonClicked(view);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        initView();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -86,16 +75,30 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                 return;
             }
 
-            locality.setTitle(place.getName().toString());
             locality.setLat(place.getLatLng().latitude);
             locality.setLng(place.getLatLng().longitude);
 
-            sunriseTimeTV.setText(locality.getTitle());
-            sunsetTimeTV.setText(String.valueOf(locality.getLat()));
+            getSunData(locality);
+            updateUI();
         }
     }
 
+    private void getSunData(Locality locality){
+        Thread thread = new Thread(new OneShotTask(locality, this));
+        thread.start();
+    }
 
+    public void updateUI() {
+        if (locality != null && locality.getSunrise() != null) {
+
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            sdf.format(locality.getSunrise().getTime());
+
+            sunriseTimeTV.setText(sdf.format(locality.getSunrise().getTime()));
+            sunsetTimeTV.setText(sdf.format(locality.getSunset().getTime()));
+        }
+    }
 
     public void onAddPlaceButtonClicked(View view) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -116,11 +119,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         }
     }
 
-    public void getCurrentLocation(){
+    public void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
-            locality = new Locality();
             LocationServices.getFusedLocationProviderClient(this)
                     .getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
@@ -129,17 +131,40 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                     if (location != null) {
                         locality.setLat(location.getLatitude());
                         locality.setLng(location.getLongitude());
-
-                        sunriseTimeTV.setText(String.valueOf(locality.getLat()));
-                        sunsetTimeTV.setText(String.valueOf(locality.getLng()));
+                        getSunData(locality);
+                        updateUI();
                     }
                 }
             });
         }
     }
 
+    private void initGoogleApi() {
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(LocationServices.API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+    }
+
+    private void initView() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onAddPlaceButtonClicked(view);
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
     @OnClick(R.id.content_background)
-    public void onBackgroundClick(){
+    public void onBackgroundClick() {
         Log.e(TAG, "onBackgroundClick");
     }
 
@@ -149,7 +174,13 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                 PERMISSIONS_REQUEST_FINE_LOCATION);
     }
 
-      @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
@@ -171,6 +202,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void sunInfo(@NonNull Locality locality) {
+        this.locality = locality;
     }
 }
 

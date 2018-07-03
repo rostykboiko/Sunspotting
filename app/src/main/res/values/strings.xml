@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="need_location_permission_message">Location permission required</string>
     <string name="touch_to_relaunch">Touch to relaunch</string>
+    <string name="sunrise_time">sunrise time</string>
+    <string name="sunset_time">sunset time</string>
+    <string name="time_zone_key">AIzaSyAysUE1lse4gt2BR9J7iUGjuKHu0zIm8-I</string>
 </resources>

@@ -30,9 +30,9 @@ public class RowViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setLocation(@NonNull Locality locality){
-        locationTitle.setText(locality.getTitle());
-        sunRiseTime.setText(locality.getSunRise());
-        sunSetTime.setText(locality.getSunSet());
+//        locationTitle.setText(locality.getTitle());
+        sunRiseTime.setText(locality.getSunrise().toString());
+        sunSetTime.setText(locality.getSunset().toString());
     }
 
     interface QuestionCardCallback {

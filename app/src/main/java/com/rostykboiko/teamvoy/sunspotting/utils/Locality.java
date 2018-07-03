@@ -1,38 +1,41 @@
 package com.rostykboiko.teamvoy.sunspotting.utils;
 
+import java.util.Date;
+
 public class Locality {
+    private Date sunrise;
+    private Date sunset;
+    private Date solarNoon;
+    private long dayLength;
+    private Date civilTwilightBegin;
+    private Date civilTwilightEnd;
+    private Date nauticalTwilightBegin;
+    private Date nauticalTwilightEnd;
+    private Date astronomicalTwilightBegin;
+    private Date astronomicalTwilightEnd;
+
     private String title;
-    private String sunRise;
-    private String sunSet;
-    private String solarNoon;
-    private String dayLength;
-    private String civilTwilightBegin;
-    private String civilTwilightEnd;
-    private String nauticalTwilightBegin;
-    private String nauticalTwilightEnd;
-    private String astronomicalTwilightBegin;
-    private String astronomicalTwilightEnd;
     private double lat;
     private double lng;
 
     public Locality(){}
 
     public Locality(String title,
-                    String sunRise,
-                    String sunSet,
-                    String solarNoon,
-                    String dayLength,
-                    String civilTwilightBegin,
-                    String civilTwilightEnd,
-                    String nauticalTwilightBegin,
-                    String nauticalTwilightEnd,
-                    String astronomicalTwilightBegin,
-                    String astronomicalTwilightEnd,
+                    Date sunRise,
+                    Date sunSet,
+                    Date solarNoon,
+                    long dayLength,
+                    Date civilTwilightBegin,
+                    Date civilTwilightEnd,
+                    Date nauticalTwilightBegin,
+                    Date nauticalTwilightEnd,
+                    Date astronomicalTwilightBegin,
+                    Date astronomicalTwilightEnd,
                     double lat,
                     double lng) {
         this.title = title;
-        this.sunRise = sunRise;
-        this.sunSet = sunSet;
+        this.sunrise = sunRise;
+        this.sunset = sunSet;
         this.solarNoon = solarNoon;
         this.dayLength = dayLength;
         this.civilTwilightBegin = civilTwilightBegin;
@@ -53,83 +56,83 @@ public class Locality {
         this.title = title;
     }
 
-    public String getSunRise() {
-        return sunRise;
+    public Date getSunrise() {
+        return sunrise;
     }
 
-    public void setSunRise(String sunRise) {
-        this.sunRise = sunRise;
+    public void setSunrise(Date sunrise) {
+        this.sunrise = sunrise;
     }
 
-    public String getSunSet() {
-        return sunSet;
+    public Date getSunset() {
+        return sunset;
     }
 
-    public void setSunSet(String sunSet) {
-        this.sunSet = sunSet;
+    public void setSunset(Date sunset) {
+        this.sunset = sunset;
     }
 
-    public String getSolarNoon() {
+    public Date getSolarNoon() {
         return solarNoon;
     }
 
-    public void setSolarNoon(String solarNoon) {
+    public void setSolarNoon(Date solarNoon) {
         this.solarNoon = solarNoon;
     }
 
-    public String getDayLength() {
+    public long getDayLength() {
         return dayLength;
     }
 
-    public void setDayLength(String dayLength) {
+    public void setDayLength(long dayLength) {
         this.dayLength = dayLength;
     }
 
-    public String getCivilTwilightBegin() {
+    public Date getCivilTwilightBegin() {
         return civilTwilightBegin;
     }
 
-    public void setCivilTwilightBegin(String civilTwilightBegin) {
+    public void setCivilTwilightBegin(Date civilTwilightBegin) {
         this.civilTwilightBegin = civilTwilightBegin;
     }
 
-    public String getCivilTwilightEnd() {
+    public Date getCivilTwilightEnd() {
         return civilTwilightEnd;
     }
 
-    public void setCivilTwilightEnd(String civilTwilightEnd) {
+    public void setCivilTwilightEnd(Date civilTwilightEnd) {
         this.civilTwilightEnd = civilTwilightEnd;
     }
 
-    public String getNauticalTwilightBegin() {
+    public Date getNauticalTwilightBegin() {
         return nauticalTwilightBegin;
     }
 
-    public void setNauticalTwilightBegin(String nauticalTwilightBegin) {
+    public void setNauticalTwilightBegin(Date nauticalTwilightBegin) {
         this.nauticalTwilightBegin = nauticalTwilightBegin;
     }
 
-    public String getNauticalTwilightEnd() {
+    public Date getNauticalTwilightEnd() {
         return nauticalTwilightEnd;
     }
 
-    public void setNauticalTwilightEnd(String nauticalTwilightEnd) {
+    public void setNauticalTwilightEnd(Date nauticalTwilightEnd) {
         this.nauticalTwilightEnd = nauticalTwilightEnd;
     }
 
-    public String getAstronomicalTwilightBegin() {
+    public Date getAstronomicalTwilightBegin() {
         return astronomicalTwilightBegin;
     }
 
-    public void setAstronomicalTwilightBegin(String astronomicalTwilightBegin) {
+    public void setAstronomicalTwilightBegin(Date astronomicalTwilightBegin) {
         this.astronomicalTwilightBegin = astronomicalTwilightBegin;
     }
 
-    public String getAstronomicalTwilightEnd() {
+    public Date getAstronomicalTwilightEnd() {
         return astronomicalTwilightEnd;
     }
 
-    public void setAstronomicalTwilightEnd(String astronomicalTwilightEnd) {
+    public void setAstronomicalTwilightEnd(Date astronomicalTwilightEnd) {
         this.astronomicalTwilightEnd = astronomicalTwilightEnd;
     }
 

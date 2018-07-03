@@ -23,9 +23,9 @@
                 android:id="@+id/sunrise_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sunrise time"
+                android:text="@string/sunrise_time"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="36sp" />
+                android:textSize="64sp" />
 
             <TextView
                 android:id="@+id/sunset_time"
@@ -33,9 +33,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sunrise_time"
                 android:layout_centerHorizontal="true"
-                android:text="sunset time"
+                android:text="@string/sunset_time"
                 android:textColor="@color/colorSecondaryText"
-                android:textSize="32sp" />
+                android:textSize="52sp" />
         </RelativeLayout>
     </RelativeLayout>
 
