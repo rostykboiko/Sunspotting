@@ -10,37 +10,32 @@ import com.rostykboiko.teamvoy.sunspotting.R;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @NonNull
-    private QuestionsCardCallback callback;
+    private LocalitiesCallback callback;
 
     private ArrayList<Locality> locationsList = new ArrayList<>();
 
-    LocalitiesAdapter(@NonNull QuestionsCardCallback callback) {
+    LocalitiesAdapter(@NonNull LocalitiesCallback callback) {
         this.callback = callback;
     }
 
     @Override
     public RowViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.places_row, parent, false);
+                .inflate(R.layout.row_location, parent, false);
 
-        return new RowViewHolder(itemView, parent.getContext(), new RowViewHolder.QuestionCardCallback() {
+        return new RowViewHolder(itemView, parent.getContext(), new RowViewHolder.LocalitiesCallback() {
             @Override
             public void onDeleteCard(int position) {
                 callback.onCardDeleted(locationsList.get(position));
                 locationsList.remove(position);
                 notifyDataSetChanged();
             }
-
-            @Override
-            public void onEditClick(int position) {
-                callback.onEditClick(locationsList.get(position));
-                notifyDataSetChanged();
-            }
-        });
+            });
     }
 
     @Override
@@ -48,7 +43,11 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Locality locality = locationsList.get(position);
         RowViewHolder viewHolder = (RowViewHolder) holder;
         viewHolder.setLocation(locality);
+        System.out.println("Locality: " + locality.getTitle() + " " + locality.getSunrise());
+    }
 
+    void setLocalitiesList(@NonNull ArrayList<Locality> localitiesList) {
+        this.locationsList = localitiesList;
     }
 
     @Override
@@ -56,9 +55,7 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return locationsList.size();
     }
 
-    interface QuestionsCardCallback {
+    interface LocalitiesCallback {
         void onCardDeleted(@NonNull Locality locality);
-
-        void onEditClick(@NonNull Locality locality);
     }
 }

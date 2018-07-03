@@ -3,10 +3,7 @@ package com.rostykboiko.teamvoy.sunspotting.utils;
 import com.google.gson.Gson;
 import com.rostykboiko.teamvoy.sunspotting.main.SunDataCallback;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
@@ -23,8 +20,6 @@ public class OneShotTask implements Runnable {
     @Override
     public void run() {
         callback.sunInfo(Objects.requireNonNull(getTimeZoneOff(sunInfoRequest(locality))));
-
-
     }
 
     private Locality getTimeZoneOff(Locality locality) {
@@ -62,6 +57,13 @@ public class OneShotTask implements Runnable {
         try {
             double lat = locality.getLat();
             double lng = locality.getLng();
+            String title;
+            if (locality.getTitle() != null) {
+                title = locality.getTitle();
+            } else {
+                title = "Current";
+            }
+
             URL sunApiUrl = new URL("https://api.sunrise-sunset.org/json?"
                     + "lat=" + lat
                     + "&lng=" + lng
@@ -79,6 +81,9 @@ public class OneShotTask implements Runnable {
             System.out.println("Final parsed json: " + json);
 
             locality = new Gson().fromJson(Utils.convertSunResult(json), Locality.class);
+
+            locality.setTitle(title);
+
             locality.setLat(lat);
             locality.setLng(lng);
 

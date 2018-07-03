@@ -1,6 +1,5 @@
 package com.rostykboiko.teamvoy.sunspotting.main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +10,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -30,9 +32,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.rostykboiko.teamvoy.sunspotting.R;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
 import com.rostykboiko.teamvoy.sunspotting.utils.OneShotTask;
+import com.rostykboiko.teamvoy.sunspotting.utils.Utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final int PERMISSIONS_REQUEST_FINE_LOCATION = 99;
     private static final int PLACE_PICKER_REQUEST = 1;
+
+    private ArrayList<Locality> localities = new ArrayList<>();
+    private RecyclerView localitiesRecyclerView;
+    private LocalitiesAdapter localitiesAdapter;
 
     private Locality locality;
     private GoogleApiClient mGoogleApiClient;
@@ -62,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         ButterKnife.bind(this);
         locality = new Locality();
 
+        initRecyclerView();
+
         initGoogleApi();
         getCurrentLocation();
         initView();
@@ -74,18 +82,15 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                 Log.i(TAG, "No place selected");
                 return;
             }
-
+            locality = new Locality();
+            locality.setTitle(place.getName().toString());
             locality.setLat(place.getLatLng().latitude);
             locality.setLng(place.getLatLng().longitude);
-
             getSunData(locality);
-            updateUI();
         }
     }
 
-
-
-    private void getSunData(Locality locality){
+    private void getSunData(Locality locality) {
         Thread thread = new Thread(new OneShotTask(locality, this));
         thread.start();
     }
@@ -93,12 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     public void updateUI() {
         if (locality != null && locality.getSunrise() != null) {
 
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            sdf.format(locality.getSunrise().getTime());
+            localitiesAdapter.notifyDataSetChanged();
 
-            sunriseTimeTV.setText(sdf.format(locality.getSunrise().getTime()));
-            sunsetTimeTV.setText(sdf.format(locality.getSunset().getTime()));
+            System.out.println("Locality title updateUi: " + locality.getTitle());
+            if (locality.getTitle().equals("Current")) {
+                sunriseTimeTV.setText(Utils.formatTime(locality.getSunrise().getTime()));
+                sunsetTimeTV.setText(Utils.formatTime(locality.getSunset().getTime()));
+            }
+
         }
     }
 
@@ -129,12 +136,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                     .getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    // Got last known location. In some rare situations, this can be null.
                     if (location != null) {
+                        locality = new Locality();
                         locality.setLat(location.getLatitude());
                         locality.setLng(location.getLongitude());
                         getSunData(locality);
-                        updateUI();
                     }
                 }
             });
@@ -165,13 +171,44 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
     }
 
+    private void initRecyclerView() {
+        localitiesAdapter = new LocalitiesAdapter(new LocalitiesAdapter.LocalitiesCallback() {
+            @Override
+            public void onCardDeleted(@NonNull Locality locality) {
+                localities.remove(locality);
+            }
+        });
+
+        localitiesRecyclerView = findViewById(R.id.locations_recycler);
+
+        RecyclerView.LayoutManager mRowManager = new LinearLayoutManager(getApplicationContext());
+        localitiesRecyclerView.setLayoutManager(mRowManager);
+        localitiesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        localitiesRecyclerView.setAdapter(localitiesAdapter);
+    }
+
     private void publishProgress() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (!locality.getTitle().equals("Current"))
+                    localities.add(locality);
+                for (Locality locality : localities) {
+                    System.out.println("Locality title onUiThread: " + locality.getTitle() + " "
+                            + locality.getSunrise());
+                }
+
+                localitiesAdapter.setLocalitiesList(localities);
+
                 updateUI();
             }
         });
+    }
+
+    @Override
+    public void sunInfo(@NonNull Locality locality) {
+        this.locality = locality;
+        publishProgress();
     }
 
     @OnClick(R.id.content_background)
@@ -183,12 +220,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSIONS_REQUEST_FINE_LOCATION);
+        getCurrentLocation();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
     }
 
     @Override
@@ -213,12 +250,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void sunInfo(@NonNull Locality locality) {
-        this.locality = locality;
-        publishProgress();
     }
 }
 

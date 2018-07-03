@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:orientation="horizontal"
-    android:background="@color/colorPrimary">
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackground"
+    android:orientation="horizontal">
 
     <RelativeLayout
         android:id="@+id/title_container"
@@ -22,30 +22,56 @@
 
     <RelativeLayout
         android:id="@+id/sun_time_container"
-        android:paddingEnd="8dp"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:paddingEnd="16dp">
 
-        <TextView
-            android:id="@+id/sunrise_time"
+        <LinearLayout
+            android:id="@+id/sunrise_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/sunrise_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_material_sunrise" />
+
+            <TextView
+                android:id="@+id/sunrise_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="5:45"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sunset_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5:45"
-            android:padding="8dp"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="16sp" />
+            android:layout_below="@+id/sunrise_container">
 
-        <TextView
-            android:id="@+id/sunset_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sunrise_time"
-            android:text="19:45"
-            android:padding="8dp"
-            android:textColor="@color/colorSecondaryText"
-            android:textSize="16sp" />
+            <ImageView
+                android:id="@+id/sunset_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_material_sunset" />
+
+            <TextView
+                android:id="@+id/sunset_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="19:45"
+                android:textColor="@color/colorSecondaryText"
+                android:textSize="24sp" />
+        </LinearLayout>
     </RelativeLayout>
 
 

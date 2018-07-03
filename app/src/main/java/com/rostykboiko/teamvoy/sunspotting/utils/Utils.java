@@ -1,9 +1,12 @@
 package com.rostykboiko.teamvoy.sunspotting.utils;
 
+import android.annotation.SuppressLint;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,6 +27,13 @@ public class Utils {
         locality.setSunset(date);
 
         return locality;
+    }
+
+    static public String formatTime(long time){
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+        return sdf.format(time);
     }
 
     public static String convertSunResult(String json) {

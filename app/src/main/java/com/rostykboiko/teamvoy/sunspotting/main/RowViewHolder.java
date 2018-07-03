@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.rostykboiko.teamvoy.sunspotting.R;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
+import com.rostykboiko.teamvoy.sunspotting.utils.Utils;
 
 public class RowViewHolder extends RecyclerView.ViewHolder{
 
@@ -16,9 +17,9 @@ public class RowViewHolder extends RecyclerView.ViewHolder{
     private TextView sunRiseTime;
     private TextView sunSetTime;
 
-    private QuestionCardCallback callback;
+    private LocalitiesCallback callback;
 
-    RowViewHolder(final View view, @NonNull Context context, @NonNull QuestionCardCallback callback) {
+    RowViewHolder(final View view, @NonNull Context context, @NonNull LocalitiesCallback callback) {
         super(view);
         this.context = context;
         this.callback = callback;
@@ -30,16 +31,12 @@ public class RowViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setLocation(@NonNull Locality locality){
-//        locationTitle.setText(locality.getTitle());
-        sunRiseTime.setText(locality.getSunrise().toString());
-        sunSetTime.setText(locality.getSunset().toString());
+        locationTitle.setText(locality.getTitle());
+        sunRiseTime.setText(Utils.formatTime(locality.getSunrise().getTime()));
+        sunSetTime.setText(Utils.formatTime(locality.getSunset().getTime()));
     }
 
-    interface QuestionCardCallback {
+    interface LocalitiesCallback {
         void onDeleteCard(int position);
-
-        void onEditClick(int position);
-
     }
-
 }
