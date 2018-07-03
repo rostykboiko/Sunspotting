@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         }
     }
 
+
+
     private void getSunData(Locality locality){
         Thread thread = new Thread(new OneShotTask(locality, this));
         thread.start();
@@ -163,6 +165,15 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
     }
 
+    private void publishProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        });
+    }
+
     @OnClick(R.id.content_background)
     public void onBackgroundClick() {
         Log.e(TAG, "onBackgroundClick");
@@ -207,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     @Override
     public void sunInfo(@NonNull Locality locality) {
         this.locality = locality;
+        publishProgress();
     }
 }
 

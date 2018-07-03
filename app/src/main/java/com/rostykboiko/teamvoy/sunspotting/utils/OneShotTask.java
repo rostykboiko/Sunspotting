@@ -20,18 +20,21 @@ public class OneShotTask implements Runnable {
         this.callback = callback;
     }
 
+    @Override
     public void run() {
         callback.sunInfo(Objects.requireNonNull(getTimeZoneOff(sunInfoRequest(locality))));
+
+
     }
 
     private Locality getTimeZoneOff(Locality locality) {
         try {
-        URL timeZoneUrl = new URL("https://maps.googleapis.com/maps/api/timezone/json?"
-                + "location="
-                + locality.getLat() +","
-                + locality.getLng()
-                + "&timestamp=1458000000"
-                + "&key=" + "");
+            URL timeZoneUrl = new URL("https://maps.googleapis.com/maps/api/timezone/json?"
+                    + "location="
+                    + locality.getLat() + ","
+                    + locality.getLng()
+                    + "&timestamp=1458000000"
+                    + "&key=" + "AIzaSyAysUE1lse4gt2BR9J7iUGjuKHu0zIm8-I");
 
             System.out.println("Final timeZoneUrl: " + timeZoneUrl);
 
@@ -55,8 +58,7 @@ public class OneShotTask implements Runnable {
     }
 
 
-
-    private Locality sunInfoRequest(Locality locality){
+    private Locality sunInfoRequest(Locality locality) {
         try {
             double lat = locality.getLat();
             double lng = locality.getLng();
