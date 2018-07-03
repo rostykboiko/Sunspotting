@@ -35,7 +35,7 @@
                     android:id="@+id/sunrise_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sunrise_time"
+                    android:text=""
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="64sp" />
 
@@ -61,7 +61,7 @@
                     android:id="@+id/sunset_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sunset_time"
+                    android:text=""
                     android:textColor="@color/colorSecondaryText"
                     android:textSize="52sp" />
             </LinearLayout>

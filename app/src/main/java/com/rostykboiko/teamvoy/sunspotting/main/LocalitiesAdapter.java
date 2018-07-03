@@ -23,8 +23,9 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.callback = callback;
     }
 
+    @NonNull
     @Override
-    public RowViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_location, parent, false);
 
@@ -39,7 +40,7 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         Locality locality = locationsList.get(position);
         RowViewHolder viewHolder = (RowViewHolder) holder;
         viewHolder.setLocation(locality);

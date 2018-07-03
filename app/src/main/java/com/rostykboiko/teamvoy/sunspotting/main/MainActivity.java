@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -34,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rostykboiko.teamvoy.sunspotting.R;
+import com.rostykboiko.teamvoy.sunspotting.launch.FirstLaunchActivity;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
 import com.rostykboiko.teamvoy.sunspotting.utils.OneShotTask;
 import com.rostykboiko.teamvoy.sunspotting.utils.Utils;
@@ -50,11 +50,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         GoogleApiClient.ConnectionCallbacks, SunDataCallback {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static final int PERMISSIONS_REQUEST_FINE_LOCATION = 99;
     private static final int PLACE_PICKER_REQUEST = 1;
     public static final String APP_PREFERENCES = "shared_prefs";
     public static final String APP_PREFERENCES_LOCATIONS = "locations_json";
     public static final String APP_PREFERENCES_CURRENT = "current_json";
+    public static final String APP_PREFERENCES_FIRST = "hasVisited";
 
     private SharedPreferences sharedPreferences;
 
@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+        firstLaunchCheck();
+
         localities = getSharedLocalities();
         initRecyclerView();
 
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         getCurrentLocation();
         initView();
     }
+
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
@@ -130,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                 != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, getString(R.string.need_location_permission_message),
                     Toast.LENGTH_LONG).show();
-            onLocationPermissionClicked(view);
+          //  onLocationPermissionClicked(view);
             return;
         }
         try {
@@ -181,9 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
             @Override
             public void onClick(View view) {
                 onAddPlaceButtonClicked(view);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+                }
         });
     }
 
@@ -209,8 +211,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         if (sharedPreferences.contains(APP_PREFERENCES_CURRENT)) {
             String json = sharedPreferences.getString(APP_PREFERENCES_CURRENT, "");
 
-            System.out.println("Shared get: " + json);
-
             return new Gson().fromJson(json, Locality.class);
         }
         return locality;
@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
     }
 
-
     private List<Locality> getSharedLocalities() {
         List<Locality> localities = new ArrayList<>();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -240,6 +239,19 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         }
 
         return localities;
+    }
+
+    private void firstLaunchCheck(){
+        SharedPreferences sp = getSharedPreferences(APP_PREFERENCES,
+                Context.MODE_PRIVATE);
+        boolean hasVisited = sp.getBoolean(APP_PREFERENCES_FIRST, false);
+
+        if (!hasVisited) {
+            SharedPreferences.Editor e = sp.edit();
+            e.putBoolean(APP_PREFERENCES_FIRST, true);
+            e.apply();
+            startActivity(new Intent(this, FirstLaunchActivity.class));
+        }
     }
 
     private void setSharedLocalities(List<Locality> localities) {
@@ -278,13 +290,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     @OnClick(R.id.content_background)
     public void onBackgroundClick() {
         Log.e(TAG, "onBackgroundClick");
-    }
-
-    public void onLocationPermissionClicked(View view) {
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                PERMISSIONS_REQUEST_FINE_LOCATION);
-        getCurrentLocation();
     }
 
     @Override
