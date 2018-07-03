@@ -1,6 +1,8 @@
 package com.rostykboiko.teamvoy.sunspotting.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -29,12 +31,16 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rostykboiko.teamvoy.sunspotting.R;
 import com.rostykboiko.teamvoy.sunspotting.utils.Locality;
 import com.rostykboiko.teamvoy.sunspotting.utils.OneShotTask;
 import com.rostykboiko.teamvoy.sunspotting.utils.Utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,9 +52,13 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final int PERMISSIONS_REQUEST_FINE_LOCATION = 99;
     private static final int PLACE_PICKER_REQUEST = 1;
+    public static final String APP_PREFERENCES = "shared_prefs";
+    public static final String APP_PREFERENCES_LOCATIONS = "locations_json";
+    public static final String APP_PREFERENCES_CURRENT = "current_json";
 
-    private ArrayList<Locality> localities = new ArrayList<>();
-    private RecyclerView localitiesRecyclerView;
+    private SharedPreferences sharedPreferences;
+
+    private List<Locality> localities = new ArrayList<>();
     private LocalitiesAdapter localitiesAdapter;
 
     private Locality locality;
@@ -66,9 +76,16 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-        locality = new Locality();
 
+        localities = getSharedLocalities();
         initRecyclerView();
+
+        if (getSharedCurrentLocation() != null) {
+            locality = getSharedCurrentLocation();
+            updateUI();
+        } else {
+            locality = new Locality();
+        }
 
         initGoogleApi();
         getCurrentLocation();
@@ -100,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
             localitiesAdapter.notifyDataSetChanged();
 
-            System.out.println("Locality title updateUi: " + locality.getTitle());
             if (locality.getTitle().equals("Current")) {
                 sunriseTimeTV.setText(Utils.formatTime(locality.getSunrise().getTime()));
                 sunsetTimeTV.setText(Utils.formatTime(locality.getSunset().getTime()));
@@ -179,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
             }
         });
 
-        localitiesRecyclerView = findViewById(R.id.locations_recycler);
+        localitiesAdapter.setLocalitiesList(localities);
+        RecyclerView localitiesRecyclerView = findViewById(R.id.locations_recycler);
 
         RecyclerView.LayoutManager mRowManager = new LinearLayoutManager(getApplicationContext());
         localitiesRecyclerView.setLayoutManager(mRowManager);
@@ -187,17 +204,64 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         localitiesRecyclerView.setAdapter(localitiesAdapter);
     }
 
+    private Locality getSharedCurrentLocation() {
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(APP_PREFERENCES_CURRENT)) {
+            String json = sharedPreferences.getString(APP_PREFERENCES_CURRENT, "");
+
+            System.out.println("Shared get: " + json);
+
+            return new Gson().fromJson(json, Locality.class);
+        }
+        return locality;
+    }
+
+    private void setSharedCurrentLocality(Locality locality) {
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = new Gson().toJson(locality);
+        editor.putString(APP_PREFERENCES_CURRENT, json);
+        editor.apply();
+
+
+    }
+
+
+    private List<Locality> getSharedLocalities() {
+        List<Locality> localities = new ArrayList<>();
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.contains(APP_PREFERENCES_LOCATIONS)) {
+            String json = sharedPreferences.getString(APP_PREFERENCES_LOCATIONS, "");
+
+            Type itemsListType = new TypeToken<ArrayList<Locality>>() {
+            }.getType();
+            localities = new Gson().fromJson(json, itemsListType);
+        }
+
+        return localities;
+    }
+
+    private void setSharedLocalities(List<Locality> localities) {
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        String json = new Gson().toJson(localities);
+        editor.putString(APP_PREFERENCES_LOCATIONS, json);
+        editor.apply();
+    }
+
     private void publishProgress() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!locality.getTitle().equals("Current"))
+                if (!locality.getTitle().equals("Current")) {
                     localities.add(locality);
-                for (Locality locality : localities) {
-                    System.out.println("Locality title onUiThread: " + locality.getTitle() + " "
-                            + locality.getSunrise());
+                } else {
+                    setSharedCurrentLocality(locality);
                 }
 
+                setSharedLocalities(localities);
                 localitiesAdapter.setLocalitiesList(localities);
 
                 updateUI();

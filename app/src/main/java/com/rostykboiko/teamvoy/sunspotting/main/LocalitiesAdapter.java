@@ -17,7 +17,7 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     private LocalitiesCallback callback;
 
-    private ArrayList<Locality> locationsList = new ArrayList<>();
+    private List<Locality> locationsList = new ArrayList<>();
 
     LocalitiesAdapter(@NonNull LocalitiesCallback callback) {
         this.callback = callback;
@@ -46,7 +46,7 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         System.out.println("Locality: " + locality.getTitle() + " " + locality.getSunrise());
     }
 
-    void setLocalitiesList(@NonNull ArrayList<Locality> localitiesList) {
+    void setLocalitiesList(@NonNull List<Locality> localitiesList) {
         this.locationsList = localitiesList;
     }
 
