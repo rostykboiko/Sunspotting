@@ -9,4 +9,5 @@
     <string name="time_zone_key" translatable="false">AIzaSyAysUE1lse4gt2BR9J7iUGjuKHu0zIm8-I</string>
     <string name="current_title">Current</string>
     <string name="grant_locations_btn">Grant access to fine locations</string>
+    <string name="app_logo">app logo</string>
 </resources>

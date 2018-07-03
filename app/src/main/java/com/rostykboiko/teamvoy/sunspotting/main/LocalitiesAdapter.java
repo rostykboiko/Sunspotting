@@ -14,14 +14,9 @@ import java.util.List;
 
 class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    @NonNull
-    private LocalitiesCallback callback;
-
     private List<Locality> locationsList = new ArrayList<>();
 
-    LocalitiesAdapter(@NonNull LocalitiesCallback callback) {
-        this.callback = callback;
-    }
+    LocalitiesAdapter() {}
 
     @NonNull
     @Override
@@ -29,14 +24,7 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_location, parent, false);
 
-        return new RowViewHolder(itemView, parent.getContext(), new RowViewHolder.LocalitiesCallback() {
-            @Override
-            public void onDeleteCard(int position) {
-                callback.onCardDeleted(locationsList.get(position));
-                locationsList.remove(position);
-                notifyDataSetChanged();
-            }
-            });
+        return new RowViewHolder(itemView);
     }
 
     @Override
@@ -56,7 +44,4 @@ class LocalitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return locationsList.size();
     }
 
-    interface LocalitiesCallback {
-        void onCardDeleted(@NonNull Locality locality);
-    }
 }

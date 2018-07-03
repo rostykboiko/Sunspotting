@@ -7,8 +7,4 @@ public class TimeZone {
     public long getRawOffset() {
         return rawOffset;
     }
-
-    public long getDstOffset() {
-        return dstOffset;
-    }
 }

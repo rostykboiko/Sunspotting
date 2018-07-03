@@ -12,18 +12,6 @@ public class Locality {
 
     public Locality(){}
 
-    public Locality(String title,
-                    Date sunRise,
-                    Date sunSet,
-                    double lat,
-                    double lng) {
-        this.title = title;
-        this.sunrise = sunRise;
-        this.sunset = sunSet;
-        this.lat = lat;
-        this.lng = lng;
-    }
-
     public String getTitle() {
         return title;
     }

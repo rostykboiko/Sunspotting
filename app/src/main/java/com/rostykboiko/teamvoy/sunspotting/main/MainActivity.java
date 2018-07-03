@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
     private List<Locality> localities = new ArrayList<>();
     private LocalitiesAdapter localitiesAdapter;
-    private RecyclerView localitiesRecyclerView;
 
     private Locality locality;
     private GoogleApiClient mGoogleApiClient;
@@ -193,15 +192,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
 
     private void initRecyclerView() {
-        localitiesAdapter = new LocalitiesAdapter(new LocalitiesAdapter.LocalitiesCallback() {
-            @Override
-            public void onCardDeleted(@NonNull Locality locality) {
-                localities.remove(locality);
-            }
-        });
+        localitiesAdapter = new LocalitiesAdapter();
 
         localitiesAdapter.setLocalitiesList(localities);
-        localitiesRecyclerView = findViewById(R.id.locations_recycler);
+        RecyclerView localitiesRecyclerView = findViewById(R.id.locations_recycler);
 
         RecyclerView.LayoutManager mRowManager = new LinearLayoutManager(getApplicationContext());
         localitiesRecyclerView.setLayoutManager(mRowManager);
