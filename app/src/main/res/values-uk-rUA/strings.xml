@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sunspotting</string>
+    <string name="action_settings">Параметри</string>
+    <string name="current_title">Поточне місцезнаходження</string>
+    <string name="need_location_permission_message">Необхідний доступ до геолокації</string>
+    <string name="confirm_delete">Видалити це місцезнаходження</string>
+    <string name="grant_locations_btn">Надати доступ до геолокації</string>
+    <string name="touch_to_relaunch">Перезавантажити</string>
+</resources>

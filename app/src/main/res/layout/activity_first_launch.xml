@@ -29,7 +29,7 @@
         android:paddingEnd="32dp"
         android:paddingStart="32dp"
         android:paddingTop="24dp"
-        android:text="Grant locations"
+        android:text="@string/grant_locations_btn"
         android:textColor="@color/colorPrimaryText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

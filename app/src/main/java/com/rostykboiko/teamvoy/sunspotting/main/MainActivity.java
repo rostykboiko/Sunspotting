@@ -1,6 +1,7 @@
 package com.rostykboiko.teamvoy.sunspotting.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
     private List<Locality> localities = new ArrayList<>();
     private LocalitiesAdapter localitiesAdapter;
+    private RecyclerView localitiesRecyclerView;
 
     private Locality locality;
     private GoogleApiClient mGoogleApiClient;
@@ -93,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         getCurrentLocation();
         initView();
     }
-
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                 != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, getString(R.string.need_location_permission_message),
                     Toast.LENGTH_LONG).show();
-          //  onLocationPermissionClicked(view);
             return;
         }
         try {
@@ -189,6 +190,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
     }
 
+
+
     private void initRecyclerView() {
         localitiesAdapter = new LocalitiesAdapter(new LocalitiesAdapter.LocalitiesCallback() {
             @Override
@@ -198,12 +201,47 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
 
         localitiesAdapter.setLocalitiesList(localities);
-        RecyclerView localitiesRecyclerView = findViewById(R.id.locations_recycler);
+        localitiesRecyclerView = findViewById(R.id.locations_recycler);
 
         RecyclerView.LayoutManager mRowManager = new LinearLayoutManager(getApplicationContext());
         localitiesRecyclerView.setLayoutManager(mRowManager);
         localitiesRecyclerView.setItemAnimator(new DefaultItemAnimator());
         localitiesRecyclerView.setAdapter(localitiesAdapter);
+
+        localitiesRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(
+                this,
+                localitiesRecyclerView,
+                new RecyclerTouchListener.ClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+
+                    }
+                    @Override
+                    public void onLongClick(View view, final int position) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle(R.string.app_name)
+                                .setMessage(R.string.confirm_delete)
+                                .setIcon(R.mipmap.logo)
+                                .setCancelable(false)
+                                .setPositiveButton("Yes",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                localities.remove(position);
+                                                localitiesAdapter.notifyDataSetChanged();
+                                                setSharedLocalities(localities);
+                                            }
+                                        })
+                                .setNegativeButton("No",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                }));
     }
 
     private Locality getSharedCurrentLocation() {
