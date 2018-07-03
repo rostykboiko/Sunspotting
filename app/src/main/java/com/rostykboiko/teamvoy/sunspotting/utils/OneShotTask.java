@@ -31,7 +31,7 @@ public class OneShotTask implements Runnable {
                 + locality.getLat() +","
                 + locality.getLng()
                 + "&timestamp=1458000000"
-                + "&key=" + "AIzaSyAysUE1lse4gt2BR9J7iUGjuKHu0zIm8-I");
+                + "&key=" + "");
 
             System.out.println("Final timeZoneUrl: " + timeZoneUrl);
 
