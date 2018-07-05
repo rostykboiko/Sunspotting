@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,12 +42,15 @@ import com.rostykboiko.teamvoy.sunspotting.utils.OneShotTask;
 import com.rostykboiko.teamvoy.sunspotting.utils.Utils;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.rostykboiko.teamvoy.sunspotting.launch.FirstLaunchActivity.PERMISSIONS_REQUEST_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity implements OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, SunDataCallback {
@@ -96,6 +100,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         initView();
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        assert cm != null;
+        return cm.getActiveNetworkInfo() != null;
+    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
@@ -131,12 +141,22 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     }
 
     public void onAddPlaceButtonClicked(View view) {
+        if (!isNetworkConnected()) {
+            Toast.makeText(this, getString(R.string.need_internet_connection_message),
+                    Toast.LENGTH_LONG).show();
+            return;
+        } else
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, getString(R.string.need_location_permission_message),
                     Toast.LENGTH_LONG).show();
+
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
+
         try {
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
             Intent i = builder.build(this);
@@ -149,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     }
 
     public void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (isNetworkConnected() && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
             LocationServices.getFusedLocationProviderClient(this)
@@ -185,10 +205,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
             @Override
             public void onClick(View view) {
                 onAddPlaceButtonClicked(view);
-                }
+            }
         });
     }
-
 
 
     private void initRecyclerView() {
@@ -210,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
                     public void onClick(View view, int position) {
 
                     }
+
                     @Override
                     public void onLongClick(View view, final int position) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -273,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         return localities;
     }
 
-    private void firstLaunchCheck(){
+    private void firstLaunchCheck() {
         SharedPreferences sp = getSharedPreferences(APP_PREFERENCES,
                 Context.MODE_PRIVATE);
         boolean hasVisited = sp.getBoolean(APP_PREFERENCES_FIRST, false);

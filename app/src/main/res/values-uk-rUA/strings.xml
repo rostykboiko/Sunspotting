@@ -7,4 +7,5 @@
     <string name="confirm_delete">Видалити це місцезнаходження</string>
     <string name="grant_locations_btn">Надати доступ до геолокації</string>
     <string name="touch_to_relaunch">Перезавантажити</string>
+    <string name="need_internet_connection_message">Для роботи додатку необхідний доступ до інтернету</string>
 </resources>
